@@ -59,7 +59,7 @@ public:
     virtual void on_message(connection_hdl, message_ptr) = 0;
     virtual void on_fail(connection_hdl) = 0;
 
-    void connect(std::string address, std::u16string nick) {
+    void connect(std::string address, std::u16string nick = "") {
         m_address = address;
 
         if(!nick.empty())

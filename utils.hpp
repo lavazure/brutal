@@ -36,13 +36,20 @@ typedef std::vector<minimap_object> minimap;
 // more utilities
 namespace utils {
 
+// Distance between points
+inline double distance_between(double x0, double y0, double x1, double y1) {
+    double dx = x1 - x0;
+    double dy = y1 - y0;
+    return std::sqrt(dx * dx + dy * dy);
+}
+
 // Normalize Angle
-double normalize_angle(double angle) {
+inline double normalize_angle(double angle) {
     const double PI = M_PI;
     return angle - PI * 2.0 * floor((angle + PI) / (PI * 2.0));
 }
 
-double angle_to_point(double x0, double y0, double x1, double y1) {
+inline double angle_to_point(double x0, double y0, double x1, double y1) {
     double dx = x1 - x0;
     double dy = y1 - y0;
 
@@ -50,7 +57,7 @@ double angle_to_point(double x0, double y0, double x1, double y1) {
 }
 
 // EnergyToRadius
-double energy_to_radius(double energy) {
+inline double energy_to_radius(double energy) {
     double f = energy / 5000.0;
     f = std::min(f, 1.0);
 

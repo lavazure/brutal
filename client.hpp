@@ -32,6 +32,8 @@ public:
 
     client() : local_player(nullptr), client_base<endpoint_type>() {}
 
+    client(websocketpp::lib::asio::io_context& io) : local_player(nullptr), client_base<endpoint_type>(io) {}
+
     void on_open(connection_hdl hdl) override {
         this->ulog(this->ugreen("Connected!"));
         this->m_hdl = hdl;

@@ -32,14 +32,14 @@ public:
 
     client_base()
         : m_nolog(false), m_autoplay(true), m_logging_id(utils::get_logging_id()), m_country("NL"),
-          m_proxy(""), m_address(""), m_nick(u"botty"), m_reconnect_after(1000) {
+          m_proxy(""), m_address(""), m_nick(u""), m_reconnect_after(1000) {
         m_endpoint.init_asio();
         init();
     }
 
     client_base(io_context& io)
         : m_nolog(false), m_autoplay(true), m_logging_id(utils::get_logging_id()), m_country("NL"),
-          m_proxy(""), m_address(""), m_nick(u"botty"), m_reconnect_after(1000) {
+          m_proxy(""), m_address(""), m_nick(u""), m_reconnect_after(1000) {
         m_endpoint.init_asio(&io);
         init();
     }
@@ -59,9 +59,13 @@ public:
     virtual void on_message(connection_hdl, message_ptr) = 0;
     virtual void on_fail(connection_hdl) = 0;
 
-    void connect(std::string address, std::u16string nick = u"botty") {
+    void connect(std::string address, std::u16string nick) {
         m_address = address;
-        m_nick = nick;
+
+        if(!nick.empty())
+            m_nick = nick;
+        else
+            nick = m_nick;
 
         websocketpp::lib::error_code ec;
         auto con = m_endpoint.get_connection(address, ec);

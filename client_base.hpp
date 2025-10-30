@@ -133,8 +133,8 @@ public:
         m_message_handler = callback;
     }
 
-    void set_entered_game_handler(entered_game_handler callback) {
-        m_entered_game_handler = callback;
+    void set_enter_game_handler(enter_game_handler callback) {
+        m_enter_game_handler = callback;
     }
 
     void set_map_handler(map_handler callback) {
@@ -236,6 +236,10 @@ public:
         return "\033[92m" + text + "\033[0m";
     }
 
+    std::string uyellow(std::string text) {
+        return "\033[93m" + text + "\033[0m";
+    }
+
     std::string ucyan(std::string text) {
         return "\033[96m" + text + "\033[0m";
     }
@@ -279,7 +283,7 @@ protected:
     close_handler m_close_handler;
     error_handler m_error_handler;
     message_handler m_message_handler;
-    entered_game_handler m_entered_game_handler;
+    enter_game_handler m_enter_game_handler;
     map_handler m_map_handler;
     death_handler m_death_handler;
     kill_handler m_kill_handler;

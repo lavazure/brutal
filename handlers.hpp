@@ -37,7 +37,7 @@ typedef std::function<void(std::vector<uint8_t>&)>       message_handler;
 /*
     received id
 */
-typedef std::function<void(uint16_t)>                    entered_game_handler;
+typedef std::function<void(uint16_t)>                    enter_game_handler;
 
 /*
     received map config

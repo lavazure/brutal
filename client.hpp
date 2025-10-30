@@ -51,7 +51,7 @@ public:
     }
 
     void on_close(connection_hdl) override {
-        this->ulog(this->ucyan("disconnected."));
+        this->ulog(this->yellow("disconnected."));
 
         if (this->m_close_handler) {
             this->m_close_handler();
@@ -373,7 +373,7 @@ public:
                         this->send_nick();
                     }
 
-                    this->ulog(this->ucyan("deleted by " + std::to_string(id)));
+                    this->ulog(this->uyellow("deleted by " + std::to_string(id)));
                 }
                 break;
 
@@ -390,8 +390,8 @@ public:
 
         this->ulog(this->ugreen("Entered game! id: " + std::to_string(id)));
 
-        if(this->m_entered_game_handler) {
-            this->m_entered_game_handler(id);
+        if(this->m_enter_game_handler) {
+            this->m_enter_game_handler(id);
         }
 
         this->m_player_id = id;

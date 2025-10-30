@@ -79,10 +79,6 @@ public:
         std::vector<uint8_t> data(msg->get_payload().begin(), msg->get_payload().end());
         if(data.empty()) return;
 
-        if(this->m_message_handler) {
-            this->m_message_handler(data);
-        }
-
         switch (data[0]) {
             case opcodes::server::pong:
                 this->ulog(this->ucyan("pong!"));
@@ -120,6 +116,10 @@ public:
             default:
                 this->ulog(this->ured("Unknown opcode: " + std::to_string(data[0])));
                 break;
+        }
+
+		if(this->m_message_handler) {
+            this->m_message_handler(data);
         }
     }
 

@@ -112,6 +112,10 @@ public:
         });
     }
 
+    uint16_t get_player_id() {
+        return m_player_id;
+    }
+
     void run() {
         m_endpoint.run();
     }
@@ -243,7 +247,7 @@ public:
     std::string ucyan(std::string text) {
         return "\033[96m" + text + "\033[0m";
     }
-    
+
     void ulog(std::string message) {
         if(m_nolog) return;
         std::cout << "[" << ucyan(std::to_string(m_logging_id)) << "] " << message << std::endl;

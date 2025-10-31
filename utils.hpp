@@ -45,8 +45,10 @@ inline double distance_between(double x0, double y0, double x1, double y1) {
 
 // Normalize Angle
 inline double normalize_angle(double angle) {
-    const double PI = M_PI;
-    return angle - PI * 2.0 * floor((angle + PI) / (PI * 2.0));
+    angle = std::fmod(angle + M_PI, 2.0 * M_PI);
+    if (angle < 0)
+        angle += 2.0 * M_PI;
+    return angle - M_PI;
 }
 
 inline double angle_to_point(double x0, double y0, double x1, double y1) {

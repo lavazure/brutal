@@ -91,7 +91,7 @@ public:
     }
 
     bool has_connection() {
-        return m_client.get_con_from_hdl(m_hdl).get_state() == websocketpp::session::state::open;
+        return m_endpoint.get_con_from_hdl(m_hdl).get_state() == websocketpp::session::state::open;
     }
 
     bool playing() {
@@ -107,7 +107,7 @@ public:
     }
 
     std::string get_server() {
-        return utils::get_server(m_country);
+        return utils::get_server(m_country, m_endpoint.is_secure());
     }
 
     // async

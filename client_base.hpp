@@ -114,7 +114,7 @@ public:
     void set_timeout(std::function<void(void)> callback, unsigned long time) {
         steady_timer* timer = new steady_timer(get_io_context());
         timer->expires_after(std::chrono::milliseconds(time));
-        timer->async_wait([this, timer, callback](const websocketpp::lib::error_code& ec) {
+        timer->async_wait([timer, callback](const websocketpp::lib::error_code& ec) {
             callback();
             delete timer;
         });

@@ -90,6 +90,14 @@ public:
         ulog(ucyan("Connecting to " + address + "..."));
     }
 
+    bool has_connection() {
+        return m_client.get_con_from_hdl(m_hdl).get_state() == websocketpp::session::state::open;
+    }
+
+    bool playing() {
+        return m_playing;
+    }
+
     void send_binary(uint8_t* data, size_t size) {
         m_endpoint.send(m_hdl, data, size, websocketpp::frame::opcode::binary);
     }
@@ -277,7 +285,7 @@ protected:
     std::string m_origin;
 
     uint16_t m_player_id;
-
+    bool m_playing;
     uint16_t m_logging_id;
     bool m_nolog;
     bool m_autoplay;

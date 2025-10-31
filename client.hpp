@@ -53,6 +53,8 @@ public:
     void on_close(connection_hdl) override {
         this->ulog(this->uyellow("disconnected."));
 
+		this->m_playing = false;
+
         if (this->m_close_handler) {
             this->m_close_handler();
         }
@@ -88,6 +90,7 @@ public:
                 break;
 
             case opcodes::server::entered_game:
+				this->m_playing = true;
                 process_id(data);
                 break;
 
@@ -357,6 +360,8 @@ public:
 
                 case opcodes::events::was_killed:
                 {
+					this->m_playing = false;
+					
                     uint16_t id;
                     std::memcpy(&id, data.data() + offset, 2);
                     offset += 2;

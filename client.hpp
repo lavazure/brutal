@@ -51,7 +51,7 @@ public:
     }
 
     void on_close(connection_hdl) override {
-        this->ulog(this->yellow("disconnected."));
+        this->ulog(this->uyellow("disconnected."));
 
         if (this->m_close_handler) {
             this->m_close_handler();

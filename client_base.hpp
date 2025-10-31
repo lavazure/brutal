@@ -119,7 +119,7 @@ public:
                 try {
                     callback();
                 } catch (const std::exception& e) {
-                    ulog(ured("set_timeout() error: " + e.what()));
+                    ulog(ured(std::string("set_timeout() error: ") + e.what()));
                 }
             }
         });

@@ -91,7 +91,7 @@ public:
     }
 
     bool has_connection() {
-        return m_endpoint.get_con_from_hdl(m_hdl).get_state() == websocketpp::session::state::open;
+        return m_endpoint.get_con_from_hdl(m_hdl)->get_state() == websocketpp::session::state::open;
     }
 
     bool playing() {
@@ -99,7 +99,8 @@ public:
     }
 
     void send_binary(uint8_t* data, size_t size) {
-        m_endpoint.send(m_hdl, data, size, websocketpp::frame::opcode::binary);
+        if(m_endpoint.get_con_from_hdl(m_hdl)->get_state() == websocketpp::session::state::open)
+            m_endpoint.send(m_hdl, data, size, websocketpp::frame::opcode::binary);
     }
 
     void close_connection() {

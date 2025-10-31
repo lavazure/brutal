@@ -491,6 +491,7 @@ public:
     }
 
     void send_input(double angle, uint8_t throttle) {
+		angle = utils::normalize_angle(angle);
         uint8_t buf[10];
         buf[0] = opcodes::client::input;
         std::memcpy(buf + 1, &angle, sizeof(double));

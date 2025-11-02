@@ -61,11 +61,11 @@ struct entities {
     static opcode core             = 5;
 
     // ENTITY_ITEM
-    static opcode item_atom        = 0;
-    static opcode item_energy      = 1;
-    static opcode item_tri_plus    = 2;
-    static opcode item_tri_minus   = 3;
-    static opcode item_redflail    = 4;
+    static opcode atom             = 0;
+    static opcode energy           = 1;
+    static opcode tri_plus         = 2;
+    static opcode tri_minus        = 3;
+    static opcode red_flail        = 4;
 
     // Shapes
     static opcode shape_cirle      = 0x01;

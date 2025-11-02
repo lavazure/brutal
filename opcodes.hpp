@@ -69,7 +69,7 @@ struct entities {
 
     // Shapes
     static opcode shape_cirle      = 0x01;
-    static opcode shape_poly       = 0x01;
+    static opcode shape_poly       = 0x02;
 };
 
 // Kill Reasons

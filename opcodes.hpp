@@ -68,7 +68,7 @@ struct entities {
     static opcode red_flail        = 4;
 
     // Shapes
-    static opcode shape_cirle      = 0x01;
+    static opcode shape_circle      = 0x01;
     static opcode shape_poly       = 0x02;
 };
 

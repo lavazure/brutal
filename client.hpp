@@ -374,11 +374,13 @@ public:
                         this->m_death_handler(id, nick);
                     }
 
-                    if(this->m_autoplay) {
-                        this->send_nick();
-                    }
-
                     this->ulog(this->uyellow("deleted by " + std::to_string(id)));
+
+                    if(this->m_autoplay) {
+                        this->set_timeout([this]() {
+							this->send_nick();
+						}, 750);
+                    }
                 }
                 break;
 

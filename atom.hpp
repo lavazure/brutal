@@ -19,7 +19,7 @@ namespace brutal
 */
 struct atom : public entity
 {
-    atom () : entity (opcodes::entities::item, opcodes::entities::item_atom) {}
+    atom () : entity (opcodes::entities::item, opcodes::entities::atom) {}
 
     uint16_t energy;
     uint16_t hue;

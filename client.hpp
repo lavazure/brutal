@@ -203,13 +203,13 @@ public:
                             break;
                         case opcodes::entities::item:
                             switch (entity_sub_type) {
-                                case opcodes::entities::item_atom: e = new atom(); break;
-                                case opcodes::entities::item_energy: e = new energy(); break;
-                                case opcodes::entities::item_tri_plus:
-                                case opcodes::entities::item_tri_minus:
+                                case opcodes::entities::atom: e = new atom(); break;
+                                case opcodes::entities::energy: e = new energy(); break;
+                                case opcodes::entities::tri_plus:
+                                case opcodes::entities::tri_minus:
                                     e = new tri(entity_sub_type);
                                     break;
-                                case opcodes::entities::item_redflail: e = new red_flail_powerup(); break;
+                                case opcodes::entities::red_flail: e = new red_flail_powerup(); break;
                             }
                             break;
                         case opcodes::entities::collider:

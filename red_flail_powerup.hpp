@@ -20,7 +20,7 @@ namespace brutal
 struct red_flail_powerup : public entity
 {
     red_flail_powerup()
-        : entity(opcodes::entities::item, opcodes::entities::item_redflail)
+        : entity(opcodes::entities::item, opcodes::entities::red_flail)
     {}
 
     uint16_t energy;

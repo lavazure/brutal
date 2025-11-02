@@ -18,7 +18,7 @@ namespace brutal
 struct energy : public entity
 {
     energy()
-        : entity(opcodes::entities::item, opcodes::entities::item_energy)
+        : entity(opcodes::entities::item, opcodes::entities::energy)
     {
     }
 

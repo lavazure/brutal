@@ -1,12 +1,14 @@
 #ifndef BRUTAL_CONFIG_HPP
 #define BRUTAL_CONFIG_HPP
 
-#include <websocketpp/config/asio_client.hpp>
 #include <websocketpp/client.hpp>
+#include <websocketpp/config/asio_client.hpp>
 
 namespace brutal {
-    typedef websocketpp::client<websocketpp::config::asio_tls_client> wss;
-    typedef websocketpp::client<websocketpp::config::asio_client> ws;
-}
+// WebSocket++ client types
+typedef websocketpp::client<websocketpp::config::asio_tls_client> wss;
+typedef websocketpp::client<websocketpp::config::asio_client> ws;
 
-#endif
+}  // namespace brutal
+
+#endif // BRUTAL_CONFIG_HPP

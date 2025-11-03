@@ -1,24 +1,23 @@
 #ifndef BRUTAL_CLIENT_HPP
 #define BRUTAL_CLIENT_HPP
 
-#include "client_base.hpp"
-#include "opcodes.hpp"
-#include "config.hpp"
-#include "utils.hpp"
-
-#include "entity.hpp"
-#include "atom.hpp"
-#include "ship.hpp"
-#include "boundary.hpp"
-#include "energy.hpp"
-#include "collider.hpp"
-#include "red_flail_powerup.hpp"
-#include "tri.hpp"
-
 #include <cstring>
-#include <vector>
 #include <stdexcept>
 #include <unordered_map>
+#include <vector>
+
+#include "atom.hpp"
+#include "boundary.hpp"
+#include "client_base.hpp"
+#include "collider.hpp"
+#include "config.hpp"
+#include "energy.hpp"
+#include "entity.hpp"
+#include "opcodes.hpp"
+#include "red_flail_powerup.hpp"
+#include "ship.hpp"
+#include "tri.hpp"
+#include "utils.hpp"
 
 namespace brutal {
 
@@ -53,18 +52,15 @@ public:
     void on_close(connection_hdl) override {
         this->ulog(this->uyellow("disconnected."));
 
-		this->m_playing = false;
+        this->m_playing = false;
 
         if (this->m_close_handler) {
             this->m_close_handler();
         }
 
-        if (!this->m_reconnect_after)
-            return;
+        if (!this->m_reconnect_after) return;
 
-        this->set_timeout([this]() {
-            this->connect(this->m_address, this->m_nick);
-        }, this->m_reconnect_after);
+        this->set_timeout([this]() { this->connect(this->m_address, this->m_nick); }, this->m_reconnect_after);
     }
 
     void on_fail(connection_hdl hdl) override {
@@ -79,18 +75,18 @@ public:
 
     void on_message(connection_hdl, message_ptr msg) override {
         std::vector<uint8_t> data(msg->get_payload().begin(), msg->get_payload().end());
-        if(data.empty()) return;
+        if (data.empty()) return;
 
         switch (data[0]) {
             case opcodes::server::pong:
                 this->ulog(this->ucyan("pong!"));
-                if(this->m_pong_handler) {
+                if (this->m_pong_handler) {
                     this->m_pong_handler();
                 }
                 break;
 
             case opcodes::server::entered_game:
-				this->m_playing = true;
+                this->m_playing = true;
                 process_id(data);
                 break;
 
@@ -121,26 +117,26 @@ public:
                 break;
         }
 
-		if(this->m_message_handler) {
+        if (this->m_message_handler) {
             this->m_message_handler(data);
         }
     }
 
     void update_entities(std::vector<uint8_t>& data, uint8_t op) {
-        size_t offset = 1; // Skip opcode
+        size_t offset = 1;  // Skip opcode
 
-        while(true) {
+        while (true) {
             uint16_t entity_id;
             std::memcpy(&entity_id, data.data() + offset, 2);
             offset += 2;
 
-            if(entity_id == 0x0) {
-                if(offset < data.size()) {
+            if (entity_id == 0x0) {
+                if (offset < data.size()) {
                     uint16_t king_id;
                     std::memcpy(&king_id, data.data() + offset, 2);
                     offset += 2;
 
-                    if(king_id > 0) {
+                    if (king_id > 0) {
                         if (offset + 8 > data.size()) break;
 
                         float king_x, king_y;
@@ -152,7 +148,7 @@ public:
                         king_x *= 10;
                         king_y *= -10;
 
-                        if(this->m_king_handler) {
+                        if (this->m_king_handler) {
                             this->m_king_handler(king_id, king_x, king_y);
                         }
                     }
@@ -167,18 +163,18 @@ public:
 
             entity* e = nullptr;
 
-            switch(flags) {
-                case 0x0: // Partial
+            switch (flags) {
+                case 0x0:  // Partial
                 {
                     e = entities[entity_id];
-                    if(e) {
+                    if (e) {
                         offset = e->update_network(data, offset, false, op);
-                        
-		                if(this->m_entity_update_handler) {
-			                this->m_entity_update_handler(e);
-		                }
-                        
-                        if(e->m_update_handler) {
+
+                        if (this->m_entity_update_handler) {
+                            this->m_entity_update_handler(e);
+                        }
+
+                        if (e->m_update_handler) {
                             e->m_update_handler(e);
                         }
                     } else {
@@ -187,7 +183,7 @@ public:
                     break;
                 }
 
-                case 0x1: // Full
+                case 0x1:  // Full
                 {
                     uint8_t entity_type = data[offset++];
                     uint8_t entity_sub_type = data[offset++];
@@ -197,19 +193,25 @@ public:
                     offset = res.offset;
 
                     // Create entity according to type and subtype
-                    switch(entity_type) {
+                    switch (entity_type) {
                         case opcodes::entities::player:
                             e = new ship();
                             break;
                         case opcodes::entities::item:
                             switch (entity_sub_type) {
-                                case opcodes::entities::atom: e = new atom(); break;
-                                case opcodes::entities::energy: e = new energy(); break;
+                                case opcodes::entities::atom:
+                                    e = new atom();
+                                    break;
+                                case opcodes::entities::energy:
+                                    e = new energy();
+                                    break;
                                 case opcodes::entities::tri_plus:
                                 case opcodes::entities::tri_minus:
                                     e = new tri(entity_sub_type);
                                     break;
-                                case opcodes::entities::red_flail: e = new red_flail_powerup(); break;
+                                case opcodes::entities::red_flail:
+                                    e = new red_flail_powerup();
+                                    break;
                             }
                             break;
                         case opcodes::entities::collider:
@@ -219,14 +221,12 @@ public:
                                 e = new collider(entity_sub_type);
                             break;
                         default:
-                            this->ulog(this->ured(
-                                "ERROR: Creating unknown entity type: " + std::to_string(entity_type) +
-                                " Subtype: " + std::to_string(entity_sub_type)
-                            ));
+                            this->ulog(this->ured("ERROR: Creating unknown entity type: " + std::to_string(entity_type) +
+                                                  " Subtype: " + std::to_string(entity_sub_type)));
                             break;
                     }
 
-                    if(e) {
+                    if (e) {
                         e->nick = nick;
                         e->id = entity_id;
                         entities[entity_id] = e;
@@ -234,26 +234,24 @@ public:
 
                         bool is_self = (entity_id == this->m_player_id);
 
-                        if(is_self) {
+                        if (is_self) {
                             local_player = reinterpret_cast<ship*>(e);
                         }
 
-			            if(this->m_entity_create_handler) {
-		       	            this->m_entity_create_handler(e);
-			            }
+                        if (this->m_entity_create_handler) {
+                            this->m_entity_create_handler(e);
+                        }
 
-                        if(e->m_create_handler) {
+                        if (e->m_create_handler) {
                             e->m_create_handler(e);
                         }
                     } else {
-                        this->ulog(this->ured(
-                            "Unable to create entity. Entity type: " + std::to_string(entity_type)
-                        ));
+                        this->ulog(this->ured("Unable to create entity. Entity type: " + std::to_string(entity_type)));
                     }
                     break;
                 }
 
-                case 0x2: // Delete
+                case 0x2:  // Delete
                 {
                     uint16_t killed_by_id;
                     std::memcpy(&killed_by_id, data.data() + offset, 2);
@@ -261,20 +259,20 @@ public:
 
                     uint8_t kill_reason = data[offset++];
                     e = entities[entity_id];
-                    if(e) {
+                    if (e) {
                         e->kill_reason = kill_reason;
                         e->killed_by_id = killed_by_id;
                         offset = e->delete_network(data, offset);
-						
-						if(this->m_entity_delete_handler) {
-							this->m_entity_delete_handler(e);
-						}
 
-                        if(e->m_delete_handler) {
+                        if (this->m_entity_delete_handler) {
+                            this->m_entity_delete_handler(e);
+                        }
+
+                        if (e->m_delete_handler) {
                             e->m_delete_handler(e);
                         }
 
-						delete e;
+                        delete e;
                         entities.erase(entity_id);
                     } else {
                         this->ulog(this->ured("ERROR: Entity does not exist: " + std::to_string(entity_id)));
@@ -305,26 +303,26 @@ public:
 
         this->ulog(this->ucyan("received map config"));
 
-        if(this->m_map_handler) {
+        if (this->m_map_handler) {
             this->m_map_handler(map_version, arena_width, arena_height);
         }
     }
 
     void process_minimap(std::vector<uint8_t>& data) {
-		int offset = 1; // Skip opcode
-		uint16_t count;
+        int offset = 1;  // Skip opcode
+        uint16_t count;
         std::memcpy(&count, data.data() + offset, 2);
-		offset += 2;
-        
-		minimap mapinfo;
-		for(int i = 0; i < count; i++) {
-			uint8_t x = data[offset++];
-			uint8_t y = data[offset++];
-			uint8_t r = data[offset++];
-			mapinfo.push_back({x, 256-y, r});
-		}
-        
-		if(this->m_minimap_handler) {
+        offset += 2;
+
+        minimap mapinfo;
+        for (int i = 0; i < count; i++) {
+            uint8_t x = data[offset++];
+            uint8_t y = data[offset++];
+            uint8_t r = data[offset++];
+            mapinfo.push_back({x, 256 - y, r});
+        }
+
+        if (this->m_minimap_handler) {
             this->m_minimap_handler(mapinfo);
         }
     }
@@ -332,16 +330,15 @@ public:
     void process_events(std::vector<uint8_t>& data, uint8_t) {
         int offset = 1;
 
-        while(true) {
+        while (true) {
             uint8_t _byte;
             std::memcpy(&_byte, data.data() + offset, 1);
             offset += 1;
 
-            if(_byte == 0x0) break;
+            if (_byte == 0x0) break;
 
-            switch(_byte) {
-                case opcodes::events::did_kill:
-                {
+            switch (_byte) {
+                case opcodes::events::did_kill: {
                     uint16_t id;
                     std::memcpy(&id, data.data() + offset, 2);
                     offset += 2;
@@ -350,18 +347,16 @@ public:
                     std::u16string nick = res.nick;
                     offset = res.offset;
 
-                    if(this->m_kill_handler) {
+                    if (this->m_kill_handler) {
                         this->m_kill_handler(id, nick);
                     }
 
                     this->ulog(this->ucyan("deleted " + std::to_string(id)));
-                }
-                break;
+                } break;
 
-                case opcodes::events::was_killed:
-                {
-					this->m_playing = false;
-					
+                case opcodes::events::was_killed: {
+                    this->m_playing = false;
+
                     uint16_t id;
                     std::memcpy(&id, data.data() + offset, 2);
                     offset += 2;
@@ -370,23 +365,20 @@ public:
                     std::u16string nick = res.nick;
                     offset = res.offset;
 
-                    if(this->m_death_handler) {
+                    if (this->m_death_handler) {
                         this->m_death_handler(id, nick);
                     }
 
                     this->ulog(this->uyellow("deleted by " + std::to_string(id)));
 
-                    if(this->m_autoplay) {
-                        this->set_timeout([this]() {
-							this->send_nick();
-						}, 750);
+                    if (this->m_autoplay) {
+                        this->set_timeout([this]() { this->send_nick(); }, 750);
                     }
-                }
-                break;
+                } break;
 
                 default:
                     this->ulog(this->ured("error processing event"));
-                break;
+                    break;
             }
         }
     }
@@ -397,7 +389,7 @@ public:
 
         this->ulog(this->ugreen("Entered game! id: " + std::to_string(id)));
 
-        if(this->m_enter_game_handler) {
+        if (this->m_enter_game_handler) {
             this->m_enter_game_handler(id);
         }
 
@@ -409,17 +401,17 @@ public:
         bool containsData = false;
         leaderboard lb;
 
-        while(true) {
+        while (true) {
             if (offset + 1 >= data.size()) break;
             uint16_t id = data[offset] | (data[offset + 1] << 8);
             offset += 2;
 
-            if(id == 0x0) break;
+            if (id == 0x0) break;
 
             containsData = true;
 
             uint32_t score;
-            if(op == 1) {
+            if (op == 1) {
                 score = data[offset] | (data[offset + 1] << 8);
                 offset += 2;
             } else {
@@ -434,7 +426,7 @@ public:
             lb.push_back({nick, score, id, 0});
         }
 
-        if(offset + 1 < data.size()) {
+        if (offset + 1 < data.size()) {
             uint16_t id = data[offset] | (data[offset + 1] << 8);
             offset += 2;
 
@@ -455,7 +447,7 @@ public:
             }
         }
 
-        if(containsData && this->m_leaderboard_handler) {
+        if (containsData && this->m_leaderboard_handler) {
             this->m_leaderboard_handler(lb);
         }
     }
@@ -472,9 +464,7 @@ public:
         this->send_binary(buf, sizeof(buf));
     }
 
-    void send_nick() {
-        send_nick(this->m_nick);
-    }
+    void send_nick() { send_nick(this->m_nick); }
 
     void send_nick(const std::u16string& nick) {
         this->ulog(this->ucyan("sending nick..."));
@@ -493,7 +483,7 @@ public:
     }
 
     void send_input(double angle, uint8_t throttle) {
-		angle = utils::normalize_angle(angle);
+        angle = utils::normalize_angle(angle);
         uint8_t buf[10];
         buf[0] = opcodes::client::input;
         std::memcpy(buf + 1, &angle, sizeof(double));
@@ -508,18 +498,15 @@ public:
 
     void click_once() {
         send_click(true);
-        this->set_timeout([this]() {
-            send_click(false);
-        }, 135);
+        this->set_timeout([this]() { send_click(false); }, 135);
     }
 
-    ship& player() {
-		return *local_player;
-	}
+    ship& player() { return *local_player; }
 
 private:
     ship* local_player;
 };
-} // namespace brutal
 
-#endif
+}  // namespace brutal
+
+#endif // BRUTAL_CLIENT_HPP

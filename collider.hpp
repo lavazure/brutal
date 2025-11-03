@@ -1,24 +1,21 @@
 #ifndef BRUTAL_COLLIDER_HPP
 #define BRUTAL_COLLIDER_HPP
 
-#include "entity.hpp"
-#include "opcodes.hpp"
-
-#include <vector>
-#include <cstdint>
 #include <cstddef>
+#include <cstdint>
 #include <cstring>
+#include <vector>
 
-namespace brutal
-{
+#include "opcodes.hpp"
+#include "entity.hpp"
 
+namespace brutal {
 /*
     A class representing a collider
     type: 4
 */
-struct collider : public entity
-{
-    explicit collider(uint8_t subtype)
+struct collider : public entity {
+    collider(uint8_t subtype)
         : entity(opcodes::entities::collider, subtype),
           shape_index(0),
           pulsing(false),
@@ -26,9 +23,7 @@ struct collider : public entity
           hit_value(0.0f),
           count(0),
           core_stage(0),
-          core_rotation(0.0f)
-    {
-    }
+          core_rotation(0.0f) {}
 
     uint8_t shape_index;
     bool pulsing;
@@ -38,8 +33,7 @@ struct collider : public entity
     uint8_t core_stage;
     float core_rotation;
 
-    virtual size_t update_network(std::vector<uint8_t>& data, size_t offset, bool /*is_full*/) override
-    {
+    size_t update_network(std::vector<uint8_t>& data, size_t offset, bool is_full) override {
         float cur_x;
         float cur_y;
         float cur_angle;
@@ -56,17 +50,13 @@ struct collider : public entity
         shape_index = data[offset];
         offset += 1;
 
-        if (subtype == opcodes::entities::bouncer)
-        {
+        if (subtype == opcodes::entities::bouncer) {
             uint8_t did_hit = data[offset++];
-            if (did_hit)
-            {
+            if (did_hit) {
                 hit_value = 1.0f;
             }
             count = data[offset++];
-        }
-        else if (subtype == opcodes::entities::core)
-        {
+        } else if (subtype == opcodes::entities::core) {
             uint8_t flags = data[offset++];
             core_stage = flags & static_cast<uint8_t>(~0x8);
             uint8_t pulse_flag = flags & 0x8;
@@ -83,12 +73,9 @@ struct collider : public entity
         return offset;
     }
 
-    virtual size_t delete_network(std::vector<uint8_t>& /*data*/, size_t offset) override
-    {
-        return offset;
-    }
+    size_t delete_network(std::vector<uint8_t>& data, size_t offset) override { return offset; }
 };
 
-} // namespace brutal
+}  // namespace brutal
 
-#endif // BRUTAL_COLLIDER_HPP
+#endif  // BRUTAL_COLLIDER_HPP

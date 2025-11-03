@@ -5,7 +5,8 @@
 
 namespace brutal {
 namespace opcodes {
-// opcode type
+
+// Opcode type
 typedef const uint8_t opcode;
 
 // Client -> Server
@@ -66,6 +67,7 @@ struct entities {
     static opcode tri_plus         = 2;
     static opcode tri_minus        = 3;
     static opcode red_flail        = 4;
+    static opcode redflail        = 4;
 
     // Shapes
     static opcode shape_circle     = 0x01;

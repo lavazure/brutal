@@ -12,29 +12,9 @@
 #include <cmath>
 
 namespace brutal {
-// leaderboard
-struct leaderboard_item
-{
-    std::u16string nick;
-    uint32_t score;
-    uint16_t id;
-    uint16_t rank;
-};
 
-typedef std::vector<leaderboard_item> leaderboard;
-
-// minimap
-struct minimap_object
-{
-    uint8_t x;
-    uint8_t y;
-    uint8_t r;
-};
-
-typedef std::vector<minimap_object> minimap;
-
-// more utilities
-namespace utils {
+// utilities
+namespace util {
 
 // Distance between points
 inline double distance_between(double x0, double y0, double x1, double y1) {

@@ -1,26 +1,20 @@
 #ifndef BRUTAL_ENERGY_HPP
 #define BRUTAL_ENERGY_HPP
 
-#include "entity.hpp"
-#include "opcodes.hpp"
-
-#include <vector>
-#include <cstdint>
 #include <cstddef>
+#include <cstdint>
 #include <cstring>
+#include <vector>
 
-namespace brutal
-{
+#include "opcodes.hpp"
+#include "entity.hpp"
 
+namespace brutal {
 /*
     A class representing energy
 */
-struct energy : public entity
-{
-    energy()
-        : entity(opcodes::entities::item, opcodes::entities::energy)
-    {
-    }
+struct energy : public entity {
+    energy() : entity(opcodes::entities::item, opcodes::entities::energy) {}
 
     uint16_t m_energy;
     uint16_t hue;
@@ -28,8 +22,7 @@ struct energy : public entity
     bool flail_grabbed;
     uint8_t energy_type;
 
-    virtual size_t update_network(std::vector<uint8_t>& data, size_t offset, bool is_full) override
-    {
+    size_t update_network(std::vector<uint8_t>& data, size_t offset, bool is_full) override {
         float cur_x;
         float cur_y;
         float cur_angle;
@@ -50,8 +43,7 @@ struct energy : public entity
         y = -cur_y * 10.0f;
         angle = cur_angle;
 
-        if (is_full)
-        {
+        if (is_full) {
             std::memcpy(&hue, data.data() + offset, sizeof(hue));
             offset += sizeof(hue);
 
@@ -62,17 +54,16 @@ struct energy : public entity
         return offset;
     }
 
-    virtual size_t delete_network(std::vector<uint8_t>& data, size_t offset) override
-    {
+    size_t delete_network(std::vector<uint8_t>& data, size_t offset) override {
         flail_grabbed = static_cast<bool>(data[offset]);
         offset += 1;
 
         being_deleted = true;
-        
+
         return offset;
     }
 };
 
-} // namespace brutal
+}  // namespace brutal
 
-#endif // BRUTAL_ENERGY_HPP
+#endif  // BRUTAL_ENERGY_HPP

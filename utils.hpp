@@ -1,20 +1,19 @@
 #ifndef BRUTAL_UTILS_HPP
 #define BRUTAL_UTILS_HPP
 
-#include <algorithm>
-#include <cstdint>
 #include <curl/curl.h>
+
+#include <algorithm>
+#include <cmath>
+#include <cstdint>
 #include <iostream>
-#include <stdexcept>
 #include <sstream>
+#include <stdexcept>
 #include <string>
 #include <vector>
-#include <cmath>
 
 namespace brutal {
-
-// utilities
-namespace util {
+namespace utils {
 
 // Distance between points
 inline double distance_between(double x0, double y0, double x1, double y1) {
@@ -26,8 +25,7 @@ inline double distance_between(double x0, double y0, double x1, double y1) {
 // Normalize Angle
 inline double normalize_angle(double angle) {
     angle = std::fmod(angle + M_PI, 2.0 * M_PI);
-    if (angle < 0)
-        angle += 2.0 * M_PI;
+    if (angle < 0) angle += 2.0 * M_PI;
     return angle - M_PI;
 }
 
@@ -54,14 +52,14 @@ inline uint16_t get_logging_id() {
     return ++id;
 }
 
-// master
+// Master
 inline size_t write_callback(void* contents, size_t size, size_t nmemb, std::string* output) {
     size_t total_size = size * nmemb;
     output->append(static_cast<char*>(contents), total_size);
     return total_size;
 }
 
-// connect to master server
+// Connect to master server
 inline std::string get_server(const std::string& region, bool is_secure = false) {
     CURL* curl = curl_easy_init();
 
@@ -84,8 +82,7 @@ inline std::string get_server(const std::string& region, bool is_secure = false)
     curl_slist_free_all(header_list);
     curl_easy_cleanup(curl);
 
-    if (response_body == "1" || response_body == "0")
-    {
+    if (response_body == "1" || response_body == "0") {
         throw std::runtime_error("Server is full or link has expired");
     }
 
@@ -110,13 +107,10 @@ inline std::string get_server(const std::string& region, bool is_secure = false)
     int secure_port = room + 8080 + 1000;
 
     std::stringstream full_host;
-    if (is_secure)
-    {
+    if (is_secure) {
         std::replace(ip.begin(), ip.end(), '.', '-');
         full_host << "wss://" << ip << ".brutal.io:" << secure_port;
-    }
-    else
-    {
+    } else {
         full_host << "ws://" << ip << ":" << insecure_port;
     }
 
@@ -126,35 +120,29 @@ inline std::string get_server(const std::string& region, bool is_secure = false)
 inline std::string to_u8string(const std::u16string& u16s) {
     std::string utf8;
     utf8.reserve(u16s.size());
-    for (char16_t c : u16s)
-    {
+    for (char16_t c : u16s) {
         utf8 += static_cast<char>(c);
     }
     return utf8;
 }
 
-struct result
-{
+struct result {
     std::u16string nick;
     size_t offset;
 };
 
-inline result get_string(const std::vector<uint8_t>& data, size_t offset)
-{
+inline result get_string(const std::vector<uint8_t>& data, size_t offset) {
     std::u16string nick;
 
-    while (true)
-    {
-        if (offset + 1 >= data.size())
-        {
+    while (true) {
+        if (offset + 1 >= data.size()) {
             throw std::out_of_range("offset out of bounds");
         }
 
         uint16_t value = static_cast<uint16_t>(data[offset]) | (static_cast<uint16_t>(data[offset + 1]) << 8);
         offset += 2;
 
-        if (value == 0)
-        {
+        if (value == 0) {
             break;
         }
 
@@ -164,7 +152,7 @@ inline result get_string(const std::vector<uint8_t>& data, size_t offset)
     return {nick, offset};
 }
 
-} // namespace utils
-} // namespace brutal
+}  // namespace util
+}  // namespace brutal
 
-#endif // BRUTAL_UTILS_HPP
+#endif  // BRUTAL_UTILS_HPP

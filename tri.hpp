@@ -1,27 +1,22 @@
 #ifndef BRUTAL_TRI_HPP
 #define BRUTAL_TRI_HPP
 
-#include "entity.hpp"
-#include "opcodes.hpp"
-
-#include <vector>
 #include <cstdint>
 #include <cstring>
+#include <vector>
 
-namespace brutal
-{
+#include "opcodes.hpp"
+#include "entity.hpp"
+
+namespace brutal {
 
 /*
-    A class representing a sentinel
+    A class representing a Sentinel
     type: 4
     subtype: +2, -3
 */
-struct tri : public entity
-{
-    explicit tri(uint8_t subtype)
-        : positive(true), entity(opcodes::entities::item, subtype)
-    {
-    }
+struct tri : public entity {
+    explicit tri(uint8_t subtype) : positive(true), entity(opcodes::entities::item, subtype) {}
 
     bool being_deleted;
     bool flail_grabbed;
@@ -30,8 +25,7 @@ struct tri : public entity
     float impulse;
     uint16_t hue;
 
-    virtual size_t update_network(std::vector<uint8_t>& data, size_t offset, bool is_full) override
-    {
+    size_t update_network(std::vector<uint8_t>& data, size_t offset, bool is_full) override {
         float cur_x;
         float cur_y;
         float cur_angle;
@@ -53,14 +47,12 @@ struct tri : public entity
         angle = cur_angle;
 
         uint8_t impulse_flag = data[offset];
-        if (impulse_flag)
-        {
+        if (impulse_flag) {
             impulse = 1.0f;
         }
         offset += 1;
 
-        if (is_full)
-        {
+        if (is_full) {
             positive = static_cast<bool>(data[offset]);
             offset += 1;
 
@@ -70,17 +62,16 @@ struct tri : public entity
         return offset;
     }
 
-    virtual size_t delete_network(std::vector<uint8_t>& data, size_t offset) override
-    {
+    size_t delete_network(std::vector<uint8_t>& data, size_t offset) override {
         flail_grabbed = static_cast<bool>(data[offset]);
         offset += 1;
 
         being_deleted = true;
-        
+
         return offset;
     }
 };
 
-} // namespace brutal
+}  // namespace brutal
 
-#endif // BRUTAL_TRI_HPP
+#endif  // BRUTAL_TRI_HPP

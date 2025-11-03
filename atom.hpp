@@ -10,7 +10,6 @@
 #include "entity.hpp"
 
 namespace brutal {
-
 /*
     A class representing an atom
     type: 4

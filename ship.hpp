@@ -6,8 +6,8 @@
 #include <cstring>
 #include <vector>
 
-#include "entity.hpp"
 #include "opcodes.hpp"
+#include "entity.hpp"
 #include "utils.hpp"
 
 namespace brutal {

@@ -32,7 +32,7 @@ class client_base {
     client_base()
         : m_nolog(false),
           m_autoplay(true),
-          m_logging_id(util::get_logging_id()),
+          m_logging_id(utils::get_logging_id()),
           m_country("NL"),
           m_proxy(""),
           m_address(""),

@@ -28,7 +28,7 @@ public:
 
     std::unordered_map<uint16_t, ship_ptr> get_ship_map() {
         return get_map<ship>([](const entity_ptr& e) {
-            return e->type == opcodes::entities::ship;
+            return e->type == opcodes::entities::player;
         });
     }
 

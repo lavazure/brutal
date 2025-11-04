@@ -6,8 +6,7 @@
 #include <string>
 #include <vector>
 #include <functional>
-
-#include "utils.hpp"
+#include <memory>
 
 namespace brutal {
 // all entities
@@ -37,14 +36,12 @@ struct entity {
 
     virtual size_t delete_network(std::vector<uint8_t>&, size_t offset) { return offset; }
 
-    void set_create_handler(entity_create_handler callback) { m_create_handler = callback; }
+    void set_update_handler(std::function<void(std::shared_ptr<entity>)> callback) { m_update_handler = callback; }
 
-    void set_update_handler(entity_update_handler callback) { m_update_handler = callback; }
+    void set_delete_handler(std::function<void(std::shared_ptr<entity>)> callback) { m_delete_handler = callback; }
 
-    void set_delete_handler(entity_delete_handler callback) { m_delete_handler = callback; }
-
-    std::function<void(entity*)> m_update_handler;
-    std::function<void(entity*)> m_delete_handler;
+    std::function<void(std::shared_ptr<entity>)> m_update_handler;
+    std::function<void(std::shared_ptr<entity>)> m_delete_handler;
 };
 
 }  // namespace brutal

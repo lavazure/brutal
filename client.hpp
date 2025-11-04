@@ -238,7 +238,7 @@ public:
                         bool is_self = (entity_id == this->m_player_id);
 
                         if (is_self) {
-                            local_player = reinterpret_cast<ship*>(e);
+                            local_player = reinterpret_cast<ship_ptr>(e);
                         }
 
                         if (this->m_entity_create_handler) {
@@ -515,7 +515,7 @@ public:
     ship& player() { return *local_player; }
 
 private:
-    ship* local_player;
+    ship_ptr local_player;
 };
 
 }  // namespace brutal

@@ -159,6 +159,8 @@ class client_base {
 
     void set_minimap_handler(minimap_handler callback) { m_minimap_handler = callback; }
 
+    void set_entity_info_handler(entity_info_handler callback) { m_entity_info_handler = callback; }
+
     void set_entity_create_handler(entity_create_handler callback) { m_entity_create_handler = callback; }
 
     void set_entity_update_handler(entity_update_handler callback) { m_entity_update_handler = callback; }
@@ -241,6 +243,7 @@ protected:
     leaderboard_handler m_leaderboard_handler;
     pong_handler m_pong_handler;
     minimap_handler m_minimap_handler;
+    entity_info_handler m_entity_info_handler;
     entity_create_handler m_entity_create_handler;
     entity_update_handler m_entity_update_handler;
     entity_delete_handler m_entity_delete_handler;

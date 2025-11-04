@@ -7,102 +7,68 @@
 #include "entity_types.hpp"
 #include "opcodes.hpp"
 
-#define get_typed(entity) \
-    if ((entity)->type == 5) \
-        return *reinterpret_cast<brutal::ship*>(entity); \
-    else if ((entity)->type == 1) \
-        return *reinterpret_cast<brutal::collider*>(entity); \
-    else if ((entity)->type == 4 && (entity)->subtype == 0) \
-        return *reinterpret_cast<brutal::atom*>(entity); \
-    else if ((entity)->type == 4 && (entity)->subtype == 1) \
-        return *reinterpret_cast<brutal::energy*>(entity); \
-    else if ((entity)->type == 4 && ((entity)->subtype == 2 || (entity)->subtype == 3)) \
-        return *reinterpret_cast<brutal::tri*>(entity); \
-    else if ((entity)->type == 4 && (entity)->subtype == 4) \
-        return *reinterpret_cast<brutal::red_flail_powerup*>(entity);
-
-
 namespace brutal {
-// Entity Compnent System
+
 class entity_map {
 public:
     entity_ptr& operator[](uint16_t id) {
         return m_map[id];
     }
 
-    std::unordered_map<uint16_t, ship_ptr> get_ship_map() {
-        std::unordered_map<uint16_t, ship_ptr> ship_map;
-
-        for (auto& pair: m_map) {
-            if(pair.second->type != opcodes::entites::ship) return;
-            ship_map[pair.first] = pair.second;
+    template <typename T>
+    std::unordered_map<uint16_t, std::shared_ptr<T>> get_map(std::function<bool(const entity_ptr&)> predicate) {
+        std::unordered_map<uint16_t, std::shared_ptr<T>> result;
+        for (auto it = m_map.begin(); it != m_map.end(); ++it) {
+            if (predicate(it->second)) {
+                result[it->first] = std::static_pointer_cast<T>(it->second);
+            }
         }
+        return result;
+    }
 
-       return ship_map;
+    std::unordered_map<uint16_t, ship_ptr> get_ship_map() {
+        return get_map<ship>([](const entity_ptr& e) {
+            return e->type == opcodes::entities::ship;
+        });
     }
 
     std::unordered_map<uint16_t, atom_ptr> get_atom_map() {
-        std::unordered_map<uint16_t, atom_ptr> atom_map;
-
-        for (auto& pair: m_map) {
-            if(pair.second->type != opcodes::entites::item || pair.second->subtype != opcodes::entities::atom) return;
-            atom_map[pair.first] = pair.second;
-        }
-
-       return atom_map;
+        return get_map<atom>([](const entity_ptr& e) {
+            return e->type == opcodes::entities::item && e->subtype == opcodes::entities::atom;
+        });
     }
 
     std::unordered_map<uint16_t, energy_ptr> get_energy_map() {
-        std::unordered_map<uint16_t, energy_ptr> energy_map;
-
-        for (auto& pair: m_map) {
-            if(pair.second->type != opcodes::entites::item || pair.second->subtype != opcodes::entities::energy) return;
-            energy_map[pair.first] = pair.second;
-        }
-
-       return energy_map;
-    }
-
-    std::unordered_map<uint16_t, collider_ptr> get_collider_map() {
-        std::unordered_map<uint16_t, collider_ptr> collider_map;
-
-        for (auto& pair: m_map) {
-            if(pair.second->type != opcodes::entites::collider) return;
-            collider_map[pair.first] = pair.second;
-        }
-
-       return collider_map;
+        return get_map<energy>([](const entity_ptr& e) {
+            return e->type == opcodes::entities::item && e->subtype == opcodes::entities::energy;
+        });
     }
 
     std::unordered_map<uint16_t, tri_ptr> get_tri_map() {
-        std::unordered_map<uint16_t, tri_ptr> tri_map;
-
-        for (auto& pair: m_map) {
-            if(pair.second->type != opcodes::entites::item || (pair.second->subtype != opcodes::entities::tri_plus && pair.second->subtype != opcodes::entities::tri_minus)) return;
-            tri_map[pair.first] = pair.second;
-        }
-
-       return tri_map;
+        return get_map<tri>([](const entity_ptr& e) {
+            return e->type == opcodes::entities::item &&
+                   (e->subtype == opcodes::entities::tri_plus || e->subtype == opcodes::entities::tri_minus);
+        });
     }
 
     std::unordered_map<uint16_t, redflail_ptr> get_redflail_map() {
-        std::unordered_map<uint16_t, redflail_ptr> redflail_map;
-
-        for (auto& pair: m_map) {
-            if(pair.second->type != opcodes::entites::item || pair.second->subtype != opcodes::entities::redflail) return;
-            redflail_map[pair.first] = pair.second;
-        }
-
-       return redflail_map;
+        return get_map<red_flail_powerup>([](const entity_ptr& e) {
+            return e->type == opcodes::entities::item && e->subtype == opcodes::entities::redflail;
+        });
     }
 
     std::unordered_map<uint16_t, redflail_ptr> get_red_flail_map() {
         return get_redflail_map();
     }
 
+    std::unordered_map<uint16_t, collider_ptr> get_collider_map() {
+        return get_map<collider>([](const entity_ptr& e) {
+            return e->type == opcodes::entities::collider;
+        });
+    }
+
     void erase(uint16_t id) {
-        auto it = m_map.find(id);
-        if(it != m_map.end()) m_map.erase(it);
+        m_map.erase(id);
     }
 
 private:

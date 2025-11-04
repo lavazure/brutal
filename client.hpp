@@ -504,6 +504,7 @@ public:
     }
 
     float angle_to(float dx, float dy) {
+        if (local_player == nullptr) return 0;
         return utils::angle_to(local_player->x, local_player->y, dx, dy);
     }
 

@@ -4,7 +4,7 @@
 #include <cstdint>
 #include <unordered_map>
 
-#include "entity.hpp"
+#include "entity_types.hpp"
 
 #define get_typed(entity) \
     if ((entity)->type == 5) \
@@ -22,11 +22,23 @@
 
 
 namespace brutal {
-// Entity Pointer
-typedef entity* entity_ptr;
-
 // Entity Compnent System
-class entity_map {};
+class entity_map {
+public:
+    entity_ptr& operator[](uint16_t id) {
+        auto it = m_map.find(id);
+        if(it != m_map.end()) return it->second;
+        else return nullptr;
+    }
+
+    void erase(uint16_t id) {
+        auto it = m_map.find(id);
+        if(it != m_map.end()) m_map.erase(it);
+    }
+
+private:
+    std::unordered_map<uint16_t, entity_ptr> m_map;
+};
 
 // leaderboard
 struct leaderboard_item {

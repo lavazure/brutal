@@ -18,20 +18,20 @@ namespace brutal {
 namespace utils {
 
 // Distance between points
-inline double distance_between(double x0, double y0, double x1, double y1) {
+inline double distance(double x0, double y0, double x1, double y1) {
     double dx = x1 - x0;
     double dy = y1 - y0;
     return std::sqrt(dx * dx + dy * dy);
 }
 
 // Normalize Angle
-inline double normalize_angle(double angle) {
+inline double normalize(double angle) {
     angle = std::fmod(angle + M_PI, 2.0 * M_PI);
     if (angle < 0) angle += 2.0 * M_PI;
     return angle - M_PI;
 }
 
-inline double angle_to_point(double x0, double y0, double x1, double y1) {
+inline double angle_to(double x0, double y0, double x1, double y1) {
     double dx = x1 - x0;
     double dy = y1 - y0;
 

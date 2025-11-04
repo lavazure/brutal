@@ -7,6 +7,7 @@
 #include <system_error>
 #include <vector>
 
+#include "entity_types.hpp"
 #include "utils.hpp"
 
 namespace brutal {
@@ -51,13 +52,13 @@ typedef std::function<void(void)> pong_handler;
 typedef std::function<void(minimap&)> minimap_handler;
 
 // entity update
-typedef std::function<void(entity*)> entity_update_handler;
+typedef std::function<void(entity_ptr)> entity_update_handler;
 
 // entity create
-typedef std::function<void(entity*)> entity_create_handler;
+typedef std::function<void(entity_ptr)> entity_create_handler;
 
 // entity delete
-typedef std::function<void(entity*)> entity_delete_handler;
+typedef std::function<void(entity_ptr)> entity_delete_handler;
 
 }  // namespace brutal
 

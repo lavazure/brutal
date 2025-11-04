@@ -5,6 +5,7 @@
 #include <stdexcept>
 #include <unordered_map>
 #include <vector>
+#include <memory>
 
 #include "atom.hpp"
 #include "boundary.hpp"
@@ -18,6 +19,8 @@
 #include "ship.hpp"
 #include "tri.hpp"
 #include "utils.hpp"
+#include "entity_types.hpp"
+#include "misc.hpp"
 
 namespace brutal {
 
@@ -27,7 +30,7 @@ public:
     using typename client_base<endpoint_type>::connection_hdl;
     using typename client_base<endpoint_type>::message_ptr;
 
-    std::unordered_map<uint16_t, entity*> entities;
+    entity_map entities;
 
     client() : local_player(nullptr), client_base<endpoint_type>() {}
 
@@ -161,7 +164,7 @@ public:
             uint8_t flags = data[offset];
             offset += 1;
 
-            entity* e = nullptr;
+            entity_ptr e = nullptr;
 
             switch (flags) {
                 case 0x0:  // Partial
@@ -195,30 +198,30 @@ public:
                     // Create entity according to type and subtype
                     switch (entity_type) {
                         case opcodes::entities::player:
-                            e = new ship();
+                            e = std::make_shared<ship>();
                             break;
                         case opcodes::entities::item:
                             switch (entity_sub_type) {
                                 case opcodes::entities::atom:
-                                    e = new atom();
+                                    e = std::make_shared<atom>();
                                     break;
                                 case opcodes::entities::energy:
-                                    e = new energy();
+                                    e = std::make_shared<energy>();
                                     break;
                                 case opcodes::entities::tri_plus:
                                 case opcodes::entities::tri_minus:
-                                    e = new tri(entity_sub_type);
+                                    e = std::make_shared<tri>(entity_sub_type);
                                     break;
                                 case opcodes::entities::red_flail:
-                                    e = new red_flail_powerup();
+                                    e = std::make_shared<red_flail_powerup>();
                                     break;
                             }
                             break;
                         case opcodes::entities::collider:
                             if (entity_sub_type == opcodes::entities::boundary)
-                                e = new boundary();
+                                e = std::make_shared<boundary>();
                             else
-                                e = new collider(entity_sub_type);
+                                e = std::make_shared<collider>(entity_sub_type);
                             break;
                         default:
                             this->ulog(this->ured("ERROR: Creating unknown entity type: " + std::to_string(entity_type) +
@@ -479,7 +482,7 @@ public:
     }
 
     void send_input(double angle, uint8_t throttle) {
-        angle = utils::normalize_angle(angle);
+        angle = utils::normalize(angle);
         uint8_t buf[10];
         buf[0] = opcodes::client::input;
         std::memcpy(buf + 1, &angle, sizeof(double));
@@ -495,6 +498,14 @@ public:
     void click_once() {
         send_click(true);
         this->set_timeout([this]() { send_click(false); }, 135);
+    }
+
+    float angle_to(float dx, float dy) {
+        return utils::angle_to(local_player->x, local_player->y, dx, dy);
+    }
+
+    void aim(float dx, float dy, uint8_t throttle) {
+        send_input(angle_to(dx, dy), throttle);
     }
 
     ship& player() { return *local_player; }

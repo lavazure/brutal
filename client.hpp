@@ -241,10 +241,6 @@ public:
                         if (this->m_entity_create_handler) {
                             this->m_entity_create_handler(e);
                         }
-
-                        if (e->m_create_handler) {
-                            e->m_create_handler(e);
-                        }
                     } else {
                         this->ulog(this->ured("Unable to create entity. Entity type: " + std::to_string(entity_type)));
                     }

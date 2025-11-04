@@ -71,6 +71,14 @@ public:
         m_map.erase(id);
     }
 
+    std::unordered_map<uint16_t, entity_ptr>::iterator begin() {
+        return m_map.begin();
+    }
+
+    std::unordered_map<uint16_t, entity_ptr>::iterator end() {
+        return m_map.end();
+    }
+
 private:
     std::unordered_map<uint16_t, entity_ptr> m_map;
 };

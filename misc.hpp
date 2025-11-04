@@ -105,8 +105,6 @@ public:
         if(it != m_map.end()) m_map.erase(it);
     }
 
-    std
-
 private:
     std::unordered_map<uint16_t, entity_ptr> m_map;
 };

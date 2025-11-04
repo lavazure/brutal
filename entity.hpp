@@ -5,8 +5,8 @@
 #include <cstdint>
 #include <string>
 #include <vector>
+#include <functional>
 
-#include "handlers.hpp"
 #include "utils.hpp"
 
 namespace brutal {
@@ -43,9 +43,8 @@ struct entity {
 
     void set_delete_handler(entity_delete_handler callback) { m_delete_handler = callback; }
 
-    entity_create_handler m_create_handler;
-    entity_update_handler m_update_handler;
-    entity_delete_handler m_delete_handler;
+    std::function<void(entity*)> m_update_handler;
+    std::function<void(entity*)> m_delete_handler;
 };
 
 }  // namespace brutal

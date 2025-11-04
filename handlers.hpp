@@ -10,11 +10,9 @@
 #include "utils.hpp"
 
 namespace brutal {
-
-// forwarded reference
-struct entity;
-
-// event handlers
+/*
+    Event Handlers
+*/
 
 // websocket open
 typedef std::function<void(void)> open_handler;

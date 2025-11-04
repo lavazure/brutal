@@ -8,6 +8,7 @@
 #include <vector>
 
 #include "entity_types.hpp"
+#include "misc.hpp"
 #include "utils.hpp"
 
 namespace brutal {
@@ -50,6 +51,9 @@ typedef std::function<void(void)> pong_handler;
 
 // received minimap packet
 typedef std::function<void(minimap&)> minimap_handler;
+
+// received entity info packet
+typedef std::function<void(entity_map&, uint8_t)> entity_info_handler;
 
 // entity update
 typedef std::function<void(entity_ptr)> entity_update_handler;

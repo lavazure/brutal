@@ -283,6 +283,10 @@ public:
                     this->ulog(this->ured("Invalid entity flag"));
                     break;
             }
+
+            if (this->m_entity_info_handler) {
+                this->m_entity_info_handler(entities, op);
+            }
         }
     }
 

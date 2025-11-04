@@ -238,7 +238,7 @@ public:
                         bool is_self = (entity_id == this->m_player_id);
 
                         if (is_self) {
-                            local_player = reinterpret_cast<ship_ptr>(e);
+                            local_player = std::dynamic_pointer_cast<ship>(e);
                         }
 
                         if (this->m_entity_create_handler) {
@@ -271,7 +271,6 @@ public:
                             e->m_delete_handler(e);
                         }
 
-                        delete e;
                         entities.erase(entity_id);
                     } else {
                         this->ulog(this->ured("ERROR: Entity does not exist: " + std::to_string(entity_id)));

@@ -512,7 +512,14 @@ public:
         send_input(angle_to(dx, dy), throttle);
     }
 
-    ship& player() { return *local_player; }
+    ship& player() {
+        if (local_player == nullptr) {
+            static ship p;
+            return p;
+        }
+        
+        return *local_player;
+    }
 
 private:
     ship_ptr local_player;

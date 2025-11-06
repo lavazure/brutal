@@ -78,7 +78,6 @@ public:
 
     void on_message(connection_hdl, message_ptr msg) override {
         std::vector<uint8_t> data(msg->get_payload().begin(), msg->get_payload().end());
-        if (data.empty()) return;
 
         switch (data[0]) {
             case opcodes::server::pong:

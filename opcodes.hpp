@@ -4,12 +4,16 @@
 #include <cstdint>
 
 namespace brutal {
+/// Constants related to WebSocket opcodes
+/**
+ * Brutal Opcodes are 1 byte.
+ */
 namespace opcodes {
 
-// Opcode type
+/// Opcode type
 typedef const uint8_t opcode;
 
-// Client -> Server
+/// Client -> Server
 struct client {
     static opcode ping             = 0x00;
     static opcode hello            = 0x01;
@@ -22,7 +26,7 @@ struct client {
     static opcode click            = 0x08;
 };
 
-// Server -> Client
+/// Server -> Client
 struct server {
     static opcode pong             = 0x00;
     static opcode map_config       = 0xA0;
@@ -35,13 +39,13 @@ struct server {
     static opcode minimap          = 0xA6;
 };
 
-// Event Codes
+/// Event Codes
 struct events {
     static opcode did_kill         = 0x01;
     static opcode was_killed       = 0x02;
 };
 
-// Entity Types
+/// Entity Types
 struct entities {
     static opcode item             = 4;
     static opcode player           = 5;
@@ -74,7 +78,7 @@ struct entities {
     static opcode shape_poly       = 0x02;
 };
 
-// Kill Reasons
+/// Kill Reasons
 struct kill_reasons {
     static opcode left_screen      = 0;
     static opcode killed           = 1;
@@ -84,7 +88,7 @@ struct kill_reasons {
     static opcode vortex           = 5;
 };
 
-// Core
+/// Core
 struct core_stage {
     static opcode idle             = 0x0;
     static opcode charging         = 0x1;
